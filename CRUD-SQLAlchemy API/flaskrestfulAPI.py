@@ -50,6 +50,6 @@ api.add_resource(Store, '/store/<string:name>')     #for registering the users
 api.add_resource(Stores, '/stores')     #for registering the users
 
 if __name__=='__main__':        #make sure to run app only in main app.py file kind of file
-    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+    app.run()
     # manager.add_command('runserver',Server(port='1111', use_debugger=True)) #adding the params for port and debug mode
     # manager.run()           #this function is responsible for migrating the tables into the Database
