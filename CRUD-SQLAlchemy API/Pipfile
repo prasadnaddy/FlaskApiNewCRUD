@@ -13,6 +13,7 @@ gunicorn = "*"
 flask-restful = "*"
 flask-sqlalchemy = "*"
 flask-jwt = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.8"
