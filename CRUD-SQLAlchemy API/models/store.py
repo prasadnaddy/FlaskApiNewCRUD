@@ -9,6 +9,8 @@ class StoreModel(db.Model):
     type = db.Column(db.String(100))           #varchar column for storing passwords
     uniqueid = db.Column(db.String(100))        #varchar column for storing the unique ID for users
     items = db.relationship('ItemModel', lazy='dynamic')        #creating the relationship with ItemsModel as backreference
+    __table_args__ = (db.UniqueConstraint('name',name='_stores_items_uc'),      #adding unique constraint for foreign key in postgressql
+                 )
     
     ##[item.json() for item in self.items.all()]    to get the list of items for a store
     
