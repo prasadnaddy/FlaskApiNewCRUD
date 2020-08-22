@@ -10,7 +10,6 @@ flask-migrate = "*"
 flask-script = "*"
 marshmallow = "*"
 gunicorn = "*"
-uwsgi = "*"
 
 [requires]
 python_version = "3.8"
