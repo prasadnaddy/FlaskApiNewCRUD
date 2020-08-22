@@ -8,7 +8,7 @@ class StoreModel(db.Model):
     name = db.Column(db.String(100), primary_key=True)        #varchar column with 100 characters limit
     type = db.Column(db.String(100))           #varchar column for storing passwords
     uniqueid = db.Column(db.String(100))        #varchar column for storing the unique ID for users
-    items = db.relationship('ItemModel', lazy='dynamic')        #creating the relationship with ItemsModel as backreference
+    items = db.relationship('ItemModel', lazy='dynamic', passive_deletes=True)        #creating the relationship with ItemsModel as backreference
     __table_args__ = (db.UniqueConstraint('name',name='_stores_items_uc'),      #adding unique constraint for foreign key in postgressql
                  )
     

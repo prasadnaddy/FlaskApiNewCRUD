@@ -10,7 +10,7 @@ class ItemModel(db.Model):        #model for representing the Items
     price = db.Column(db.String(15))           #varchar column for storing passwords
     type = db.Column(db.String(100))        #varchar column for storing the unique ID for users
     uniqueid = db.Column(db.String(50))     #for unique ID for users
-    storename = db.Column(db.String(100), db.ForeignKey(StoreModel.name))       #foreign key mapping to stores id key column
+    storename = db.Column(db.String(100), db.ForeignKey(StoreModel.name, ondelete='CASCADE'))       #foreign key mapping to stores id key column
     store = db.relationship('StoreModel')       #creating relationship with Stores table by using relationship
     
     def __init__(self, name, price, type, uniqueid, storename):
