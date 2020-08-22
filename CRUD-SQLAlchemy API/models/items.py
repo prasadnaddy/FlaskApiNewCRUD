@@ -12,7 +12,8 @@ class ItemModel(db.Model):        #model for representing the Items
     uniqueid = db.Column(db.String(50))     #for unique ID for users
     storename = db.Column(db.Integer, db.ForeignKey(StoreModel.name))       #foreign key mapping to stores id key column
     store = db.relationship('StoreModel')       #creating relationship with Stores table by using relationship
-    
+    __table_args__ = (db.UniqueConstraint('storename', name='_stores_items_uc'),      #adding unique constraint for foreign key in postgressql
+                 )
     def __init__(self, name, price, type, uniqueid, storename):
         super().__init__()
         self.name = name
