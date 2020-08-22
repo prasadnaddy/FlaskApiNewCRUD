@@ -1,0 +1,20 @@
+{
+    "sqltools.connections": [
+        {
+            "database": "PrasadDB",
+            "dialect": "MSSQL",
+            "name": "Local Connection",
+            "password": "Winter@2019",
+            "port": 35001,
+            "server": "183.83.217.150",
+            "username": "unityAppUser",
+            "driver": "MSSQL"
+        },
+        {
+            "database": "${workspaceFolder:CRUD-SQLAlchemy API}/test.db",
+            "driver": "SQLite",
+            "name": "test",
+            "previewLimit": 50
+        }
+    ]
+}
