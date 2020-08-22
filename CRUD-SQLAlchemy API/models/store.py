@@ -4,8 +4,7 @@ class StoreModel(db.Model):
     __tablename__ = 'stores'     #declaring the name of the table for sqlalchemy objects
     
     ##creating the columns for the table below##
-    id = db.Column(db.Integer) 
-                #    primary_key=True)        #ID column is made as primary key
+    id = db.Column(db.Integer, primary_key=True)        #ID column is made as primary key
     name = db.Column(db.String(100), primary_key=True)        #varchar column with 100 characters limit
     type = db.Column(db.String(100))           #varchar column for storing passwords
     uniqueid = db.Column(db.String(100))        #varchar column for storing the unique ID for users
