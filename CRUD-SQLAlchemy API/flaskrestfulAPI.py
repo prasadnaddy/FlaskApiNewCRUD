@@ -13,6 +13,7 @@ from models.store import StoreModel        #importing the store model, need to d
 from flask_script import Manager, Server            #this will create some script files for DB upgrade / downgrade
 from flask_migrate import Migrate, MigrateCommand           #for migrating the scripts created using upgrade/ downgrade
 from db import db   #fetching the DB instance from db.py
+import os           #for working with environment variables
     
 app = Flask(__name__)       #creating the flask app
 app.secret_key = secrets.token_hex(20)      #adding 20 bytes of secret key to app config
@@ -35,8 +36,8 @@ with app.app_context():     #creating the app context operations
         migrate = Migrate(app, db)      #else go on as usual
     
 ##Creating the script manager to generate scripts for database migrations##
-manager = Manager(app)          #scripts manager object
-manager.add_command('db', MigrateCommand)           #adding the command to migrate the DB to our scripts manager
+# manager = Manager(app)          #scripts manager object
+# manager.add_command('db', MigrateCommand)           #adding the command to migrate the DB to our scripts manager
 
 # app.config['JWT_AUTH_USERNAME_KEY'] = 'email'     #this line deals with changing the default username key for identification
 jwt = JWT(app, authenticate, identity)
@@ -49,5 +50,6 @@ api.add_resource(Store, '/store/<string:name>')     #for registering the users
 api.add_resource(Stores, '/stores')     #for registering the users
 
 if __name__=='__main__':        #make sure to run app only in main app.py file kind of file
-    manager.add_command('runserver',Server(port='1111', use_debugger=True)) #adding the params for port and debug mode
-    manager.run()           #this function is responsible for migrating the tables into the Database
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+    # manager.add_command('runserver',Server(port='1111', use_debugger=True)) #adding the params for port and debug mode
+    # manager.run()           #this function is responsible for migrating the tables into the Database
