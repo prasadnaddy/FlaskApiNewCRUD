@@ -21,6 +21,7 @@ app.config['JWT_AUTH_URL_RULE'] = '/token'      #changing the default endpoint t
 app.config['JWT_AUTH_HEADER_PREFIX'] = 'Bearer'      #changing the default prefix from JWT to Bearer
 app.config['JWT_EXPIRATION_DELTA'] = timedelta(minutes=30)        #changing the default timeout
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'        #setting DB URL
+app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False        #setting the track property to False
 
 db.init_app(app)        #for creating the DB object for our app
