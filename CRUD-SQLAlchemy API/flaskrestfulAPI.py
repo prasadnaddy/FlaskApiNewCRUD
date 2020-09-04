@@ -47,7 +47,7 @@ api = Api(app)      #for creating the api config from app
 api.add_resource(Item,'/item/<string:name>')      #registering the Student Resource for API
 api.add_resource(Items,'/items')      #registering the Items Resource for API
 api.add_resource(UserRegister, '/register')     #for registering the users
-api.add_resource(User, '/user/<string:id>')     #for getting the users' information
+api.add_resource(User, '/user/<int:_id>')     #for getting the users' information
 api.add_resource(Store, '/store/<string:name>')     #for registering the users
 api.add_resource(Stores, '/stores')     #for registering the users
 
