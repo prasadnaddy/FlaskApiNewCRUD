@@ -27,3 +27,20 @@ class UserRegister(Resource):       #endpoint resource for the users registratio
                 'error':'user already exists with name: {}'.format(body['username'])
             },403
         
+class User(Resource):                   #endpoint resource for performing action such as GET, DELETE on users model
+    def get(self, _id):          #GET method to get the user's information
+        user = UserModel.getUserByID(UserModel, _id)        #getting the user's information by passing user ID
+        if not user:        #if we dont get any user object based on userID
+            return {
+                'Error' : 'The provided user ID is not valid, please check again'
+            },404       #return error message with 404 Response
+        return {
+            'UserDetails' : {
+                'Name' : user.username,
+                'UniqueID': user.uniqueid,
+            }           #return the user object as json with 200 status code
+        },200
+    
+    def delete(self, id):       #DELETE method to delete the user's information
+        pass
+    

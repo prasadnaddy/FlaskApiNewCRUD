@@ -3,7 +3,7 @@ from flask_restful import Api     #for the restful apis and parsing requests
 import secrets                  #module for generating the secret key
 from flask_jwt import JWT          #module for handling the authentication
 from restfulsecurity import authenticate, identity     #security functions from another py file
-from resources.userObject import UserRegister         #user register endpoint resource from user object class file
+from resources.userObject import UserRegister, User         #user register endpoint resource from user object class file
 from resources.itemResources import Item, Items           #importing the resources from another file
 from resources.storeResources import Store, Stores          #importing the store resources
 from datetime import timedelta      #for adding up minutes or seconds to token expiration time
@@ -47,6 +47,7 @@ api = Api(app)      #for creating the api config from app
 api.add_resource(Item,'/item/<string:name>')      #registering the Student Resource for API
 api.add_resource(Items,'/items')      #registering the Items Resource for API
 api.add_resource(UserRegister, '/register')     #for registering the users
+api.add_resource(User, '/user')     #for getting the users' information
 api.add_resource(Store, '/store/<string:name>')     #for registering the users
 api.add_resource(Stores, '/stores')     #for registering the users
 
