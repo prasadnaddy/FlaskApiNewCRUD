@@ -41,6 +41,14 @@ class User(Resource):                   #endpoint resource for performing action
             }           #return the user object as json with 200 status code
         },200
     
-    def delete(self, id):       #DELETE method to delete the user's information
-        pass
-    
+    def delete(self, _id):       #DELETE method to delete the user's information
+        user = UserModel.getUserByID(UserModel,_id)        #getting the user's information by passing User ID
+        if not user:        #if user object is not returned, then throw not found error with 404 status code
+            return {
+                'Error' : 'The provided user ID is not valid, please check again'
+            },404
+        db.session.query(UserModel).filter_by(id=_id).delete()   #to delete the user based on id
+        db.session.commit()     #commiting the changes back to database
+        return {
+            'Success' : 'User Deletion Success!!'
+        },200       #return success message after deleting the user
