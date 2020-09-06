@@ -4,6 +4,15 @@ import uuid         #module for generating unique User ID for the users while re
 from flask import request       #module for accepting the JSON request from API
 from models.users import UserModel      #importing the user model from models
 from db import db           #for sqlalchemy operations
+from werkzeug.security import safe_str_cmp      #for comparing strings and make it work for all python versions
+from flask_jwt_extended import (
+    jwt_required,
+    get_raw_jwt,
+    create_access_token, 
+    create_refresh_token, 
+    jwt_refresh_token_required,
+    get_jwt_identity)   #for creating tokens and token refresh process
+from blacklist import BLACKLIST         #for blacklisting the jwt tokens
 
 class UserRegister(Resource):       #endpoint resource for the users registration
     def post(self):     #POST Method to send the user details
@@ -52,3 +61,55 @@ class User(Resource):                   #endpoint resource for performing action
         return {
             'Success' : 'User Deletion Success!!'
         },200       #return success message after deleting the user
+        
+class UserLogin(Resource):          #Resource for working with token login
+    def post(self):
+        try:
+            body = request.get_json()           #fetching the username and password for token authentication from request
+            user = UserModel.getUserByUserName(UserModel,body['username'])        #checking in db for the username 
+            
+            ##Checking if user exists and the passwords match or not here##
+            if user and safe_str_cmp(user.password, body['password']):
+                accessToken = create_access_token(identity=user.id, fresh=True)     #this is a fresh token
+                refreshToken = create_refresh_token(identity=user.id)       #refresh token with user id as identity
+                return {
+                    'access_token' : accessToken,
+                    'refresh_token' : refreshToken
+                },200           #return the access and refresh token generated with 200 status code
+            
+            return {
+                'Error' : 'User Not found, please provide correct credentials'
+            },401           #user object is not valid
+        except Exception as e:
+            return {
+                'Error' : 'Internal Server Error!!'
+            },500       #internal server error gets caught up!
+            
+class UserRefreshToken(Resource):           #this is responsible for refreshing the token to get a new token
+    @jwt_refresh_token_required             #refresh token provided with first access token is required for refreshing
+    def post(self):     #POST method is used to send the refresh token as header
+        try:
+            currentUser = get_jwt_identity()        #getting the logged in user's identity value
+            ##Now we will be creating access token with identity fetched from get_jwt_identity() function
+            newToken = create_access_token(identity=currentUser, fresh=False)       #fresh is false for refresh token
+            return {
+                'access_token': newToken
+            },200           #returning the new access token only with 200 status code
+        except Exception as e:      #catching the exception and showing the error message on screen
+            return {
+                'Error' : 'Internal Server Error, please try again!!'
+            },500
+    
+class UserLogout(Resource):             #this is responsible for logging out the users
+    @jwt_required           #making sure that user must be logged in by passing the auth token
+    def post(self):         #POST method to logout the users
+        try:
+            jti = get_raw_jwt()['jti']      #getting the JWT Token identity to blacklist it
+            BLACKLIST.add(jti)      #adding the JWT token to blacklist set in another module
+            return {
+                'Message' : 'Thank you, You have been successfully Logged out!'
+            },200
+        except Exception as e:
+            return {
+                'Error' : 'Internal Server Error, please try after sometime'
+            },500

@@ -1,0 +1,1 @@
+BLACKLIST = set()     #blacklisting the user ID with ID as 2

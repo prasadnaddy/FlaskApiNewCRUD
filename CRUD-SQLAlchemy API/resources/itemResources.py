@@ -1,13 +1,18 @@
 from flask_restful import Resource, reqparse       #for creating the API and parsing request
 from flask import request       #for handling the json request
-from flask_jwt import jwt_required      #for the JWT Required condition
+from flask_jwt_extended import (
+    jwt_required, 
+    get_jwt_claims, 
+    get_jwt_identity, 
+    jwt_optional,
+    fresh_jwt_required)  #for the JWT Required condition
 import uuid         #for generating the unique IDS
 from models.items import ItemModel      #fetching the functions inside the item model from models
 from db import db           #for sqlalchemy object
 
 ## We are creating API as resource with class and inherting the resource in every class
 class Item(Resource):
-    @jwt_required()      #decorator to indicate JWT token is necessary for getting this endpoint to work
+    @jwt_required      #decorator to indicate JWT token is necessary for getting this endpoint to work
     def get(self, name):
         try:
             item = ItemModel.getItemByName(ItemModel, name)
@@ -43,9 +48,15 @@ class Item(Resource):
         # return {
         #     'error':'The requested Item is not found'       #else, return error message with 404 error
         # },404
-        
+    @jwt_required       #adding the token authentication for this DELETE Method
     def delete(self, name):
         try:
+            claims = get_jwt_claims()       #capturing the claims we added in main file
+            if not claims['isAdmin']:       #checking if the user is admin or not, if yes proceeed or else throw error
+                return {
+                    'Error' : 'Admin Privilage Required for this action!'
+                },401
+                
             item = ItemModel.getItemByName(ItemModel, name)     #get the item object
             if item:    # if item is found, then delete it
                 db.session.query(ItemModel).filter_by(name=name).delete()   #to delete the item based on name
@@ -106,19 +117,29 @@ class Item(Resource):
                 },201
             
 class Items(Resource):
+    @jwt_optional           #JWT maybe required or not, it is optional
     def get(self):
         try:
+            userID = get_jwt_identity()         #to get the userID from identity field in JWT
+            if userID:      #if user has passed the token, then we get userid object else none
             ##List comprehension to get all the items as JSON format##
-            items = [{'name': row.name, 'price':row.price, 'type':row.type} for row in db.session.query(ItemModel).all()] #list comprehension to form a JSON list
+                items = [{'name': row.name, 'price':row.price, 'type':row.type} for row in db.session.query(ItemModel).all()] #list comprehension to form a JSON list
+                return {
+                    'items': items,         #returning the complete list of items as JSON response
+                },200
+            ##Return only optional output if token is not provided##
             return {
-                'items': items,         #returning the complete list of items as JSON response
+                'items' : [{'name': row.name} for row in db.session.query(ItemModel).all()], #list comprehension to form a JSON list
+                'Message' : 'For detailed information, please pass the token in header'
             },200
+            
         except Exception as e:
             print(str(e))
             return {
                 'Error' : 'Unexpected error occured at server side. Please try again'
             },500
     
+    @fresh_jwt_required         #only the fresh access token will work for creating a new item
     def post(self):
         try:
             body = request.get_json()       #getting the request as JSON

@@ -12,8 +12,8 @@ marshmallow = "*"
 gunicorn = "*"
 flask-restful = "*"
 flask-sqlalchemy = "*"
-flask-jwt = "*"
 psycopg2 = "*"
+flask-jwt-extended = {extras = ["asymmetric_crypto"], version = "*"}
 
 [requires]
 python_version = "3.8"
